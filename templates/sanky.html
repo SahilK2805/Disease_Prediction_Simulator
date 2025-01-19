@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RemediX AI Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}">
+    
+</head>
+<body>
+    <div class="container">
+        <h1>RemediX</h1>
+        <div class="chat-interface">
+            <div class="input-group">
+                <input type="text" id="question" placeholder="Ask a question..." aria-label="Ask a question">
+                <button onclick="sendQuestion()">Send</button>
+            </div>
+            <div id="response"></div>
+        </div>
+    </div>
+
+    <script>
+        async function sendQuestion() {
+            const question = document.getElementById('question').value;
+            const responseDiv = document.getElementById('response');
+
+            if (!question.trim()) {
+                return;
+            }
+
+            responseDiv.innerHTML += `<p><strong>You:</strong> ${question}</p>`;
+            document.getElementById('question').value = '';
+
+            try {
+                const response = await fetch('/sanky', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question }),
+                });
+
+                const data = await response.json();
+                if (data.response) {
+                    responseDiv.innerHTML += `<p><strong>Gemini AI:</strong> ${data.response}</p>`;
+                } else {
+                    responseDiv.innerHTML += `<p style="color:var(--accent-color);">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML += `<p style="color:var(--accent-color);">Error: Unable to reach the server. Please try again later.</p>`;
+            }
+
+            responseDiv.scrollTop = responseDiv.scrollHeight;
+        }
+
+        document.getElementById('question').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
