@@ -7,11 +7,6 @@ from sklearn.naive_bayes import GaussianNB
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-import sys
-sys.path.insert(0, '/home/SahilK28/mysite')
-
-from app import app as application
-
 
 # Load environment variables from .env file
 load_dotenv()
